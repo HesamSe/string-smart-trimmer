@@ -1,34 +1,30 @@
-function x(stringArray, maxLength) {
-    let strings = stringArray;
+function stringSmartTrimmer(stringArray, maxLength) {
+    let stringObjects = stringArray.map((value,index) => ({value, index}));
     let label = '';
 
     let charsLength = maxLength;
-    let itemLength = Math.floor(charsLength / strings.length);
+    let itemLength = Math.floor(charsLength / stringObjects.length);
 
-    strings = strings.sort((a, b) => a.length - b.length);
+    stringObjects = stringObjects.sort((a, b) => a.value.length - b.value.length);
     
-    strings = strings.map((ll, index) => {
-        let trimmedExt = ll;
-        if (ll.length > itemLength)
-            trimmedExt = ll.substring(0, itemLength) + '\u2026';
+    stringObjects = stringObjects.map((so, index) => {
+        let trimmedExt = so.value;
+        if (so.value.length > itemLength)
+            trimmedExt = so.value.substring(0, itemLength);
 
-        ll = trimmedExt;
+        so.value = trimmedExt;
 
-        if (strings.length > index + 1) {
+        if (stringObjects.length > index + 1) {
             charsLength -= trimmedExt.length;
-            itemLength = Math.floor(charsLength / (strings.length - index - 1));
+            itemLength = Math.floor(charsLength / (stringObjects.length - index - 1));
         }
-        return ll;
+        return so;
     });
 
-    strings
-        // .sort((a, b) => a.index - b.index)
-        .forEach(ll => {
-            // sort by index
-            label = label ? label + ' - ' + ll : ll;
-        });
+    return stringObjects
+        .sort((a,b) => a.index - b.index) // sort by original index
+        .map(so => so.value);
 
-    return label;
-}
+};
 
-console.log(x(['fig','banana', 'Cornelian cherry', 'GrapeFruit'], 20));
+module.exports.default = stringSmartTrimmer;
